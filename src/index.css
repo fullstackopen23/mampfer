@@ -13,7 +13,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  gap: 20px;
+  min-height: 100vh;
 }
 
 .figure {
@@ -201,4 +202,13 @@ header svg {
 .logoContainer {
   display: flex;
   gap: 20px;
+}
+
+footer {
+  background-color: #024950;
+  width: 100%;
+  padding: 20px;
+  position: absolute;
+  bottom: 0px;
+  color: #addde5;
 }

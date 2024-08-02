@@ -1,10 +1,12 @@
-import Square from "./Square";
+import Square from './Square'
 
 export default function Board({
   isRedsTurn,
   selectFigure,
   squares,
   placeFigure,
+  redFigures,
+  blueFigures,
 }) {
   return (
     <div className="board">
@@ -16,9 +18,11 @@ export default function Board({
             placeFigure={placeFigure}
             square={square}
             key={square.id}
+            blueFigures={blueFigures}
+            redFigures={redFigures}
           ></Square>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

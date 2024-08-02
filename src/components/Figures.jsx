@@ -1,6 +1,12 @@
-import Figure from "./Figure";
+import Figure from './Figure'
 
-export default function Figures({ figures, selectFigure, isRedsTurn }) {
+export default function Figures({
+  figures,
+  selectFigure,
+  redFigures,
+  blueFigures,
+  isRedsTurn,
+}) {
   return (
     <div className="figures">
       {figures.map((figure) => {
@@ -10,9 +16,11 @@ export default function Figures({ figures, selectFigure, isRedsTurn }) {
             selectFigure={selectFigure}
             key={figure.id}
             figure={figure}
+            redFigures={redFigures}
+            blueFigures={blueFigures}
           ></Figure>
-        ) : null;
+        ) : null
       })}
     </div>
-  );
+  )
 }

@@ -1,67 +1,75 @@
-import Figure from "./Figure";
-import { useDrop } from "react-dnd";
-import { ItemTypes } from "../utils/constants";
+import Figure from './Figure'
+import { useDrop } from 'react-dnd'
+import { ItemTypes } from '../utils/constants'
 
 export default function Square({
+  redFigures,
+  blueFigures,
   isRedsTurn,
   selectFigure,
   placeFigure,
   square,
 }) {
-  let border;
+  let border
   if (square.id <= 5) {
-    border = "border-bottom";
+    border = 'border-bottom'
   }
   if (square.id === 0 || square.id === 1) {
-    border += " border-right";
+    border += ' border-right'
   } else if (square.id === 3 || square.id === 4) {
-    border += " border-right";
+    border += ' border-right'
   } else if (square.id === 6 || square.id === 7) {
-    border += " border-right";
+    border += ' border-right'
   }
 
-  const classes = `square ${square.playable ? "playable" : ""} ${
-    square.winner ? "winner" : ""
-  } ${border}`;
+  const classes = `square ${square.playable ? 'playable' : ''} ${
+    square.winner ? 'winner' : ''
+  } ${border}`
   const [{}, drop] = useDrop(
     () => ({
       accept: ItemTypes.FIGURE,
       drop: () => placeFigure(square),
     }),
     [square]
-  );
+  )
 
-  let active;
+  let active
   if (
     isRedsTurn &&
-    square.figuresOnSquare[square.figuresOnSquare.length - 1]?.team === "red"
+    square.figuresOnSquare[square.figuresOnSquare.length - 1]
+      ?.team === 'red'
   ) {
-    active = true;
+    active = true
   } else if (
     !isRedsTurn &&
-    square.figuresOnSquare[square.figuresOnSquare.length - 1]?.team === "blue"
+    square.figuresOnSquare[square.figuresOnSquare.length - 1]
+      ?.team === 'blue'
   ) {
-    active = true;
+    active = true
   } else {
-    active = false;
+    active = false
   }
   return (
     <div
       ref={drop}
       className={classes}
       onClick={() => {
-        placeFigure(square);
+        placeFigure(square)
       }}
     >
       {square.figuresOnSquare.length !== 0 ? (
         <Figure
+          redFigures={redFigures}
+          blueFigures={blueFigures}
           active={active}
           selectFigure={selectFigure}
-          figure={square.figuresOnSquare[square.figuresOnSquare.length - 1]}
+          figure={
+            square.figuresOnSquare[square.figuresOnSquare.length - 1]
+          }
         ></Figure>
       ) : (
         <></>
       )}
     </div>
-  );
+  )
 }
