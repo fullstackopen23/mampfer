@@ -1,0 +1,204 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+body {
+  background-color: #003135;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.figure {
+  cursor: move;
+}
+
+.figure.small {
+  font-size: 1.25rem;
+}
+
+.figure.large {
+  font-size: 3.5rem;
+}
+
+.figure.medium {
+  font-size: 2.3rem;
+}
+
+.figure.red {
+  color: #964734;
+}
+
+.figure.blue {
+  color: #376fea;
+}
+
+.figures {
+  width: 90%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 23px;
+}
+
+.square {
+  width: 33.3%;
+  max-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+}
+
+.border-bottom {
+  border-bottom: 3px solid #addde5;
+}
+
+.inactive {
+  opacity: 0.3;
+}
+
+.turnInfo {
+  width: 80%;
+  max-width: 300px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #addde5;
+  color: #addde5;
+}
+
+.border-right {
+  border-right: 3px solid #addde5;
+}
+
+.board {
+  display: flex;
+  width: 90%;
+  max-width: 300px;
+  flex-wrap: wrap;
+}
+
+select {
+  background-color: transparent;
+  color: #addde5;
+  padding: 5px 10px;
+  border-radius: 7px;
+  margin-bottom: 3px;
+}
+
+.playable {
+  background-color: #024950;
+}
+
+.isDragging {
+  opacity: 0.5;
+}
+
+.winner {
+  background-color: rgba(0, 128, 0, 0.169);
+}
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 85%;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.remove-left-border {
+  border-left: 5px solid transparent;
+}
+
+.remove-right-border {
+  border-right: 5px solid transparent;
+}
+
+.remove-top-border {
+  border-top: 5px solid transparent;
+}
+
+.remove-bottom-border {
+  border-bottom: 5px solid transparent;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  color: #addde5;
+  gap: 20px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 30px;
+  background-color: #024950;
+}
+
+header h1 {
+  font-size: 1.8rem;
+}
+
+header #infoIcon {
+  cursor: pointer;
+}
+
+header svg {
+  height: 30px;
+  width: 30px;
+}
+
+.infoContainer {
+  color: #003135;
+  padding: 30px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  background-color: #addde5;
+}
+
+.infoContainer button {
+  padding: 7px 12px;
+  border: none;
+  background-color: #024950;
+  color: white;
+  border-radius: 5px;
+  max-width: 100px;
+  cursor: pointer;
+}
+
+.infoIconContainer p {
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+#restartBtn {
+  padding: 7px 12px;
+  border: none;
+  background-color: #024950;
+  color: white;
+  border-radius: 5px;
+  max-width: 300px;
+  margin: 30px 0px;
+  width: 100%;
+  cursor: pointer;
+}
+.info {
+  width: 80%;
+  max-width: 400px;
+}
+
+.logoContainer {
+  display: flex;
+  gap: 20px;
+}
