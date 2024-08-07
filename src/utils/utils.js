@@ -62,12 +62,12 @@ export function checkWinner(squares) {
   return null
 }
 
-function canMove(squares, figure) {
+export function canMove(squares, figure) {
   if (figure.on) {
     if (
       squares[figure.on].figuresOnSquare[
         squares[figure.on].figuresOnSquare.length - 1
-      ].id == figure.id
+      ]?.id == figure.id
     ) {
       return figure
     }
@@ -117,6 +117,9 @@ export function calculateFigureIndex(
   }
 }
 
+export function getRandomInt(max) {
+  return Math.floor(Math.random() * max)
+}
 export function calculateSquareIndex(
   difficulty,
   redFigures,
@@ -137,9 +140,7 @@ export function calculateSquareIndex(
   console.log(playableSquares)
 
   if (difficulty === 'easy') {
-    return playableSquares.map((fI) => fI.id)[
-      getRandomInt(playableSquares.length - 1)
-    ]
+    return playableSquares[getRandomInt(playableSquares.length - 1)]
   } else if (difficulty === 'hard') {
     if (playableSquares.includes(0) && figure.size === 'large') {
       return 0
@@ -152,8 +153,4 @@ export function calculateSquareIndex(
       return playableSquares[getRandomInt(playableSquares.length - 1)]
     }
   }
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max)
 }

@@ -4,8 +4,8 @@ import { useState } from 'react'
 import {
   isPlayable,
   checkWinner,
-  calculateFigureIndex,
-  calculateSquareIndex,
+  canMove,
+  getRandomInt,
 } from '../utils/utils'
 import {
   COMPUTER_THINK_TIME,
@@ -25,7 +25,6 @@ export default function Game() {
   const [squares, setSquares] = useState(initalSquares)
 
   function handleSelectClick(figure) {
-    console.log(figure, 'hiuhuhu')
     if (isGameover) return
     if (isRedsTurn && figure.team === 'red') {
       setSelectedFigure(figure)
@@ -122,7 +121,7 @@ export default function Game() {
     setTimeout(() => {
       if (!winner) {
         if (opponent !== 'friend') {
-          handleComputerPlay()
+          handleComputerPlay(updatedFigures, updatedSquares)
           if (checkWinner(updatedSquares)) {
             handleWin(updatedSquares, checkWinner(updatedSquares))
             setWinner(checkWinner(updatedSquares))
@@ -132,53 +131,200 @@ export default function Game() {
     }, COMPUTER_THINK_TIME)
   }
 
-  function handleComputerPlay() {
-    console.log('computer plays...')
+  function handleComputerPlay(updatedRedFigures, updatedSquares) {
     if (isGameover) return
-    const figureIndex = calculateFigureIndex(
-      opponent,
-      redFigures,
-      blueFigures,
-      squares
-    )
-    const [computerFigure] = blueFigures.filter((f) => {
-      if (f.id === figureIndex) {
-        return f
-      }
-    })
+    const bestMove = findBestMove(updatedRedFigures, updatedSquares)
 
-    console.log(computerFigure)
-    const squareIndex = calculateSquareIndex(
-      opponent,
-      redFigures,
-      blueFigures,
-      squares,
-      computerFigure
+    const [selectedFigure] = blueFigures.filter(
+      (bf) => bf.id === bestMove.figure
     )
-    const updatedSquares = squares.map((square) => {
-      if (square.id === squareIndex) {
-        square.figuresOnSquare.push(computerFigure)
-        return { ...square, playable: false }
-      } else if (computerFigure?.on === square.id) {
-        square.figuresOnSquare.pop()
-        return { ...square, playable: false }
-      } else {
-        return { ...square, playable: false }
+    console.log(selectedFigure)
+    const updatedSquaresAfterAIplayed = updatedSquares.map(
+      (square) => {
+        if (bestMove.target === square.id) {
+          square.figuresOnSquare.push(selectedFigure)
+          return { ...square, playable: false }
+        } else if (selectedFigure?.on === square.id) {
+          square.figuresOnSquare.pop()
+          return { ...square, playable: false }
+        } else {
+          return { ...square, playable: false }
+        }
       }
-    })
-
-    const updateBlueFigures = blueFigures.map((figure) => {
-      if (figure.id === computerFigure.id) {
-        return { ...figure, onBoard: true, on: squareIndex }
+    )
+    const updatedFiguresAfterAIPlayed = blueFigures.map((figure) => {
+      if (figure.id === selectedFigure.id) {
+        return { ...figure, onBoard: true, on: bestMove.target }
       } else {
         return figure
       }
     })
-
-    setSquares(updatedSquares)
-    setBlueFigures(updateBlueFigures)
+    setSquares(updatedSquaresAfterAIplayed)
     setIsRedsTurn(true)
+    setBlueFigures(updatedFiguresAfterAIPlayed)
   }
+
+  function findBestMove(updatedRedFigures, updatedSquares) {
+    let bestScore = -Infinity
+    let bestMove
+    let playableMoves = []
+
+    for (let i = 0; i < blueFigures.length; i++) {
+      updatedSquares.map((square) => {
+        if (isPlayable(square, blueFigures[i])) {
+          playableMoves.push({
+            figure: blueFigures[i].id,
+            target: square.id,
+          })
+        }
+      })
+    }
+
+    playableMoves.map((move) => {
+      let score = minimax(
+        move,
+        0,
+        true,
+        updatedSquares,
+        blueFigures,
+        updatedRedFigures
+      )
+      if (score > bestScore) {
+        bestScore = score
+        bestMove = move
+      }
+    })
+    return bestMove
+  }
+
+  const scores = {
+    red: -1,
+    blue: 1,
+  }
+
+  function minimax(
+    move,
+    depth,
+    isMaximizing,
+    squares,
+    blueFigures,
+    redFigures
+  ) {
+    // if depth > 1 return -10, otherwise call stack exceeds
+    if (depth > 1) return -10
+
+    const updatedSquares = JSON.parse(JSON.stringify(squares))
+    // get the figure played
+    let [figure] = [...redFigures, ...blueFigures].filter(
+      (figure) => figure.id === move.figure
+    )
+    // updated the board squares
+    updatedSquares.map((square) => {
+      if (move.target === square.id) {
+        square.figuresOnSquare.push(isMaximizing ? figure : figure)
+        return square
+      } else if (
+        figure?.on === square.id ||
+        figure?.on === square.id
+      ) {
+        square.figuresOnSquare.pop()
+        return square
+      } else {
+        return square
+      }
+    })
+
+    // check if there is a winner / terminal state.
+    // if red wins: return -1, if blue (AI) wins: return 1
+    const winner = checkWinner(updatedSquares)
+    if (winner) {
+      return scores[winner.winnerTeam]
+    }
+
+    if (isMaximizing) {
+      // redfigures turn, minimizing player
+      let bestScore = Infinity
+      let playableMoves = []
+
+      // check playableRedFigures and update the onBoard and on prop.
+      const playableRedFigures = redFigures
+        .filter((rf) => canMove(squares, rf))
+        .map((rf) => {
+          if (rf.id === move.figure) {
+            return { ...rf, onBoard: true, on: move.target }
+          } else {
+            return rf
+          }
+        })
+
+      for (let i = 0; i < playableRedFigures.length; i++) {
+        updatedSquares.map((square) => {
+          if (isPlayable(square, playableRedFigures[i])) {
+            playableMoves.push({
+              figure: playableRedFigures[i].id,
+              target: square.id,
+            })
+          }
+        })
+      }
+
+      playableMoves.map((move) => {
+        let score = minimax(
+          move,
+          depth + 1,
+          false,
+          updatedSquares,
+          playableRedFigures,
+          blueFigures
+        )
+        if (score < bestScore) {
+          bestScore = score
+        }
+      })
+      return bestScore
+    } else {
+      let bestScore = -Infinity
+      let playableMoves = []
+
+      const playableBlueFigures = blueFigures
+        .filter((bf) => canMove(squares, bf))
+        .map((bf) => {
+          if (bf.id === move.figure) {
+            return { ...bf, onBoard: true, on: move.target }
+          } else {
+            return bf
+          }
+        })
+
+      for (let i = 0; i < playableBlueFigures.length; i++) {
+        updatedSquares.map((square) => {
+          if (isPlayable(square, playableBlueFigures[i])) {
+            playableMoves.push({
+              figure: playableBlueFigures[i].id,
+              target: square.id,
+            })
+          }
+        })
+      }
+
+      let score
+      playableMoves.map((move) => {
+        score = minimax(
+          move,
+          depth + 1,
+          false,
+          updatedSquares,
+          playableBlueFigures,
+          redFigures
+        )
+        if (score > bestScore) {
+          bestScore = score
+        }
+      })
+      return bestScore
+    }
+  }
+
   return (
     <div className="gameContainer">
       <select
